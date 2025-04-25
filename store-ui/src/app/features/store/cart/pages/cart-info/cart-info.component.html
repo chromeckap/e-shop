@@ -1,0 +1,10 @@
+<app-cart-item-list
+    [cart]="cart!"
+    (removeItemFromCart)="onItemRemove($event)"
+    (changeItemQuantity)="onItemQuantityChange($event)"/>
+
+@if (showNextButton) {
+    <div class="mt-8">
+        <p-button label="Pokračování k pokladně" icon="pi pi-shopping-bag" (onClick)="navigateToCheckout()"/>
+    </div>
+}

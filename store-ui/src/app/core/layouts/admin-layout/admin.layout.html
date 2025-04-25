@@ -1,0 +1,12 @@
+<app-configurator/>
+<div class="layout-wrapper" [ngClass]="containerClass">
+    <admin-topbar/>
+    <admin-sidebar/>
+    <div class="layout-main-container">
+        <div class="layout-main">
+            <router-outlet/>
+        </div>
+        <admin-footer/>
+    </div>
+    <div class="layout-mask animate-fadein"></div>
+</div>

@@ -1,0 +1,22 @@
+<h2 class="m-0.5">Kurýr</h2>
+<p class="text-gray-500 text-sm m-0.5">Typ kurýra pro zpracování logiky.</p>
+<p-divider/>
+<form [formGroup]="form">
+    <p-floatlabel variant="over" class="mt-8">
+        <label>Typ kurýra *</label>
+        <p-select
+            formControlName="courierType"
+            placeholder="Vyberte typ kurýra *"
+            emptyMessage="Nejsou dostupné žádní kurýři."
+            fluid="true"
+            filter="true"
+            showClear="true"
+            [options]="courierTypes"
+            optionLabel="name"
+        >
+        </p-select>
+    </p-floatlabel>
+    @if (form.controls['courierType'].invalid && !form.controls['courierType'].untouched) {
+        <span class="text-red-500 text-xs mt-1">Typ kurýra je povinný.</span>
+    }
+</form>

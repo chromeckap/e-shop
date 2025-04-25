@@ -1,0 +1,18 @@
+<h2 class="m-0.5">Základní informace</h2>
+<p class="text-gray-500 text-sm m-0.5">Základní informace o atributu.</p>
+<p-divider/>
+<form [formGroup]="form">
+    <p-floatlabel variant="over" class="mt-8">
+        <label for="id">ID atributu</label>
+        <input id="id" pInputText type="text" formControlName="id" class="w-full"
+               [disabled]="true">
+    </p-floatlabel>
+
+    <p-floatlabel variant="over" class="mt-8">
+        <label for="name">Název atributu *</label>
+        <input id="name" pInputText type="text" formControlName="name" class="w-full"/>
+    </p-floatlabel>
+    @if (form.controls['name'].invalid && !form.controls['name'].untouched) {
+        <span class="text-red-500 text-xs mt-1">Název atributu je povinný.</span>
+    }
+</form>

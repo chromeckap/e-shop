@@ -1,0 +1,96 @@
+<div class="flex justify-between">
+    <div class="max-lg:hidden">
+        <p-button
+            (click)="pricePopover.toggle($event)"
+            class="mr-2 mt-3"
+            severity="contrast"
+            iconPos="right"
+            icon="pi pi-filter"
+            [outlined]="true"
+            label="Výběr ceny"/>
+
+        @for (attribute of filterRanges.attributes; track attribute.id) {
+            <p-multi-select
+                placeholder="{{attribute.name}}"
+                [options]="attribute.values"
+                class="mr-2 mt-2"
+                optionLabel="value"
+                optionValue="id"
+                showHeader="false"
+                [(ngModel)]="selectedAttributeValues[attribute.id!]"
+                (onChange)="onAttributeChange(attribute, $event)"/>
+        }
+    </div>
+
+    <div class="lg:hidden mt-2">
+        <p-button
+            icon="pi pi-filter"
+            label="Filtry"
+            severity="contrast"
+            [outlined]="true"
+            (onClick)="drawerVisible = true"/>
+    </div>
+
+    <div class="flex justify-center items-center ml-10 mt-2">
+        <p-floatlabel variant="on">
+            <p-select
+                [options]="sortOptions"
+                [(ngModel)]="selectedSortOption"
+                optionLabel="name"
+                placeholder="Vyberte řazení"
+                inputId="on_label"
+                (onChange)="onSortChange()"/>
+            <label for="on_label">Typ řazení</label>
+        </p-floatlabel>
+    </div>
+</div>
+
+
+
+<p-drawer #drawer position="left" [(visible)]="drawerVisible">
+    <ng-template pTemplate="content">
+        <div class="p-4">
+            <p-button (click)="pricePopover.toggle($event)"
+                      styleClass="w-full"
+                      severity="contrast"
+                      iconPos="right"
+                      icon="pi pi-filter"
+                      [outlined]="true"
+                      label="Výběr ceny"/>
+
+            @for (attribute of filterRanges.attributes; track attribute.id) {
+                <p-multi-select
+                    placeholder="{{attribute.name}}"
+                    [options]="attribute.values"
+                    class="w-full mb-2 mt-2"
+                    optionLabel="value"
+                    optionValue="id"
+                    showHeader="false"
+                    [(ngModel)]="selectedAttributeValues[attribute.id!]"
+                    (onChange)="onAttributeChange(attribute, $event)"/>
+            }
+        </div>
+    </ng-template>
+</p-drawer>
+
+<p-popover #pricePopover>
+    <div class="p-4 pb-2">
+        <p-slider
+            [(ngModel)]="rangeValues"
+            styleClass="w-64"
+            [range]="true"
+            [step]="calculateStep()"
+            [min]="filterRanges.lowPrice || 0"
+            [max]="filterRanges.maxPrice || 0"
+            (onChange)="onPriceChange()">
+        </p-slider>
+        <div class="flex justify-between mt-4">
+              <span class="font-bold">
+                {{rangeValues[0] | customCurrency:'CZK'}}
+              </span>
+            <span class="font-bold">
+                {{rangeValues[1] | customCurrency:'CZK'}}
+              </span>
+        </div>
+    </div>
+</p-popover>

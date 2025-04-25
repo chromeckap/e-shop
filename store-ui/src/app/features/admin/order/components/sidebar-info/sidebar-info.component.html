@@ -1,0 +1,39 @@
+<h2 class="m-0.5">Dodatečné informace</h2>
+<p class="text-gray-500 text-sm m-0.5 mb-8">Nutné informace o zákazníkovi, adresu doručení a platbě.</p>
+<p-divider class="font-bold">
+    <p-tag value="Zákazník" severity="contrast"/>
+</p-divider>
+<p>
+    <i class="pi pi-user text-gray-500 mr-2"></i>
+    {{order.userDetails?.firstName}} {{order.userDetails?.lastName}}
+</p>
+<p>
+    <i class="pi pi-envelope text-gray-500 mr-2"></i>
+    {{order.userDetails?.email}}
+</p>
+<p>
+    <i class="pi pi-clock text-gray-500 mr-2"></i>
+    <span class="font-bold">Objednáno:</span>
+    {{order.createTime | date:'dd.MM.yyyy HH:mm'}}
+</p>
+<p-divider class="font-bold">
+    <p-tag value="Adresa doručení" severity="contrast"/>
+</p-divider>
+<p>
+    <i class="pi pi-map-marker text-gray-500 mr-2"></i>
+    {{order.userDetails?.address?.street}}
+</p>
+<p>
+    <i class="pi pi-map text-gray-500 mr-2"></i>
+    {{order.userDetails?.address?.postalCode}} {{order.userDetails?.address?.city}}
+</p>
+<p-divider class="font-bold">
+    <p-tag value="Platba" severity="contrast"/>
+</p-divider>
+<p>
+    <i class="pi pi-wallet text-gray-500 mr-2"></i>
+    <span class="font-bold mr-2">Status:</span>
+    <p-tag [value]="getPaymentStatusInfo(payment).value"
+           [severity]="getPaymentStatusInfo(payment).severity"
+           [icon]="getPaymentStatusInfo(payment).icon"/>
+</p>

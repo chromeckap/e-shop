@@ -1,0 +1,28 @@
+<h4 class="mb-0.5">Souhrn</h4>
+<div class="card md:text-xl">
+    <div class="flex justify-between mb-4">
+        <span>Celková cena produktů</span>
+        <span>{{cartTotal | customCurrency:'CZK'}}</span>
+    </div>
+    <div class="flex justify-between mb-4">
+        <span>Platební metoda</span>
+        @if (getPaymentPrice() !== 0) {
+            <span>{{getPaymentPrice() | customCurrency:'CZK'}}</span>
+        } @else {
+            <p-tag value="Zdarma" severity="success"/>
+        }
+    </div>
+    <div class="flex justify-between">
+        <span>Doprava</span>
+        @if (getDeliveryPrice() !== 0) {
+            <span>{{getDeliveryPrice() | customCurrency:'CZK'}}</span>
+        } @else {
+            <p-tag value="Zdarma" severity="success"/>
+        }
+    </div>
+    <p-divider/>
+    <div class="flex justify-between font-bold">
+        <span>Celková cena objednávky</span>
+        <span>{{getTotalPrice() | customCurrency:'CZK'}}</span>
+    </div>
+</div>

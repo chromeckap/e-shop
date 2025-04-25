@@ -1,0 +1,21 @@
+<h2 class="m-0.5">Základní informace</h2>
+<p class="text-gray-500 text-sm m-0.5">Základní informace o produktu.</p>
+<p-divider/>
+<form [formGroup]="form">
+    <p-floatlabel variant="over" class="mt-8">
+        <label for="id">ID produktu</label>
+        <input id="id" pInputText type="text" formControlName="id" class="w-full"
+               [disabled]="true">
+    </p-floatlabel>
+    <p-floatlabel variant="over" class="mt-8">
+        <label for="name">Název produktu *</label>
+        <input id="name" pInputText type="text" formControlName="name" class="w-full"/>
+    </p-floatlabel>
+    @if (form.controls['name'].invalid && !form.controls['name'].untouched) {
+        <span class="text-red-500 text-xs mt-1">Název produktu je povinný.</span>
+    }
+    <div class="mt-4">
+        <label for="description" class="text-xs text-gray-500 font-medium block mb-2 ml-3">Popis produktu</label>
+        <p-editor id="description" formControlName="description" class="w-full" />
+    </div>
+</form>

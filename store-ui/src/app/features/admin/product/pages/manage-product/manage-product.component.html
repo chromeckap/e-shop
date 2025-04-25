@@ -1,0 +1,63 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <h5 class="m-0 ml-2.5">
+            <i class="pi mr-2" [ngClass]="isEditing ? 'pi-pencil' : 'pi-plus'"></i>
+            {{isEditing ? 'Editace' : 'Vytvoření'}} produktu {{form.getRawValue().name}}
+        </h5>
+    </ng-template>
+    <ng-template #end>
+        <p-button icon="pi pi-save" severity="primary" class="mr-2"
+                  [label]="isEditing ? 'Uložit' : 'Vytvořit'"
+                  [disabled]="form.invalid"
+                  (onClick)="saveProduct(true)"/>
+        <p-button icon="pi pi-file" severity="secondary" class="mr-2"
+                  label="Uložit jako koncept"
+                  [disabled]="form.invalid"
+                  (onClick)="saveProduct(false)"/>
+        @if (isEditing) {
+            <p-button label="Odstranit" icon="pi pi-trash" severity="danger"
+                      (onClick)="deleteProduct()"/>
+        }
+    </ng-template>
+</p-toolbar>
+<div class="flex flex-col md:flex-row gap-8 mb-6">
+    <div class="flex flex-col md:w-2/3">
+        <div class="card flex flex-col">
+            <app-overview
+                [form]="form"
+            />
+        </div>
+        <div class="card flex flex-col">
+            <app-picture-uploader
+                [form]="form"
+            />
+        </div>
+    </div>
+    <div class="flex flex-col md:w-1/3">
+        <div class="card flex flex-col">
+            <app-category-treeselect
+                [form]="form"
+            />
+        </div>
+        <div class="card flex flex-col">
+            <app-attribute-multiselect
+                [form]="form"
+            />
+        </div>
+        <div class="card flex flex-col">
+            <app-related-product-multiselect
+                [form]="form"
+                [selectedProducts]="this.form.get('relatedProducts')?.value"
+            />
+        </div>
+    </div>
+</div>
+<div class="flex flex-col gap-8">
+    <div class="card flex flex-col">
+        <app-variant-list
+            [form]="form"
+        />
+    </div>
+</div>
+
+<p-confirmdialog [style]="{ width: '450px' }"></p-confirmdialog>

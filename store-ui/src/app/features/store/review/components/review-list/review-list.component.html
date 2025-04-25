@@ -1,0 +1,50 @@
+<div class="flex justify-end mb-4">
+    <p-floatlabel variant="on">
+        <p-select
+            [options]="sortOptions"
+            [(ngModel)]="selectedSortOption"
+            optionLabel="name"
+            placeholder="Vyberte řazení"
+            inputId="on_label"
+            (onChange)="onSortChange()"/>
+        <label for="on_label">Typ řazení</label>
+    </p-floatlabel>
+</div>
+
+@for (review of reviewsPage.content; track review.id) {
+    <div class="bg-gray-50 p-4 mb-4 rounded-lg">
+        <div class="flex flex-col mb-2">
+            <div class="flex flex-row">
+                <div class="flex flex-row justify-center mb-2">
+                    <p-rating [(ngModel)]="review.rating" [readonly]="true" class="mr-2"/>
+                    @if (isUserReview(review)) {
+                        <p-tag value="Tvá recenze" severity="success" class="scale-90"/>
+                    }
+                </div>
+                @if (authService.isAdmin || isUserReview(review)) {
+                    <div class="flex gap-2 ml-auto">
+                        @if (authService.getCurrentUser?.id === review.userId) {
+                            <p-button icon="pi pi-pencil" severity="info" [rounded]="false" [outlined]="true"
+                                      (onClick)="editReview(review)"/>
+                        }
+                        <p-button icon="pi pi-trash" severity="danger" [rounded]="false" [outlined]="true"
+                                  (onClick)="deleteReview(review)"/>
+                    </div>
+                }
+            </div>
+            <span class="text-gray-500 text-sm">{{review.createTime | date:'dd.MM.yyyy HH:mm'}}</span>
+        </div>
+
+        <p class="mb-4">
+            {{review.text}}
+        </p>
+    </div>
+}
+<p-paginator
+    [rows]="reviewsPage.size"
+    [totalRecords]="reviewsPage.totalElements"
+    [first]="currentPage * (reviewsPage.size || 0)"
+    (onPageChange)="onPageChange($event)"/>
+
+
+<p-confirmdialog [style]="{ width: '450px' }"></p-confirmdialog>

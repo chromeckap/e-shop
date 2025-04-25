@@ -1,0 +1,54 @@
+<h2 class="m-0.5">Zakoupené produkty</h2>
+<p class="text-gray-500 text-sm m-0.5 mb-8">Seznam zakoupených produktů. Součástí jsou dodatečné náklady a celková cena objednávku.</p>
+<p-table
+    #table
+    dataKey="id"
+    [value]="orderDataTable"
+    [lazy]="true"
+    [showGridlines]="true"
+>
+    <ng-template #header>
+        <tr>
+            <th>ID</th>
+            <th>Název</th>
+            <th>Vlastnosti</th>
+            <th>Cena za kus</th>
+            <th>Množství</th>
+            <th>Celková cena</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-item>
+        @if (item.type === 'product') {
+            <tr>
+                <td class="font-light">{{item.id}}</td>
+                <td>{{item.name}}</td>
+                <td>
+                    <ul>
+                        @for (key of objectKeys(item.values); track key) {
+                            <li>
+                                <span class="font-bold">{{key}}</span>: {{item.values[key]}}
+                            </li>
+                        }
+                    </ul>
+                </td>
+                <td>{{item.price | customCurrency:'CZK'}}</td>
+                <td>{{item.quantity}}</td>
+                <td>{{item.totalPrice | customCurrency:'CZK'}}</td>
+            </tr>
+        } @else if (item.type === 'cost') {
+            <tr>
+                <td class="font-light">/</td>
+                <td colspan="4">
+                    <p-tag severity="info" value="{{item.name}}"/>
+                </td>
+                <td>{{item.price | customCurrency:'CZK'}}</td>
+            </tr>
+        }
+    </ng-template>
+    <ng-template #footer>
+        <tr class="font-bold">
+            <td colspan="5">Celková cena objednávky</td>
+            <td>{{order.totalPrice | customCurrency:'CZK'}}</td>
+        </tr>
+    </ng-template>
+</p-table>

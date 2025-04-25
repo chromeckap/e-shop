@@ -1,0 +1,49 @@
+<h2 class="m-0.5">Základní informace</h2>
+<p class="text-gray-500 text-sm m-0.5">Základní informace o dopravní metodě.</p>
+<p-divider/>
+<form [formGroup]="form">
+    <p-floatlabel variant="over" class="mt-8">
+        <label for="id">ID dopravní metody</label>
+        <input id="id" pInputText type="text" formControlName="id" class="w-full"
+               [disabled]="true">
+    </p-floatlabel>
+    <p-floatlabel variant="over" class="mt-8">
+        <label for="name">Název dopravní metody *</label>
+        <input id="name" pInputText type="text" formControlName="name" class="w-full"/>
+    </p-floatlabel>
+    @if (form.controls['name'].invalid && !form.controls['name'].untouched) {
+        <span class="text-red-500 text-xs mt-1">Název dopravní metody je povinný.</span>
+    }
+    <div class="field mt-3">
+        <label for="isActive" class="text-xs text-gray-500 font-medium block mb-2 ml-3">Dopravní metoda je aktivní? *</label>
+        <p-toggle-button id="isActive" formControlName="isActive"
+                         onLabel="Ano" onIcon="pi pi-check"
+                         offLabel="Ne" offIcon="pi pi-times"/>
+    </div>
+    <p-floatlabel variant="over" class="mt-8">
+        <label for="price">Cena dopravní metody *</label>
+        <p-inputgroup id="price">
+            <p-input-number autocomplete="off" formControlName="price"></p-input-number>
+            <p-inputgroup-addon>Kč</p-inputgroup-addon>
+        </p-inputgroup>
+    </p-floatlabel>
+    @if (form.controls['price'].invalid && !form.controls['price'].untouched) {
+        <span class="text-red-500 text-xs mt-1">Cena dopravní metody je povinná.</span>
+    }
+    <div class="field mt-3">
+        <label for="isActive" class="text-xs text-gray-500 font-medium block mb-2 ml-3">Dopravní metoda bude zdarma při hranici objednávky? *</label>
+        <p-toggle-button id="isFreeForOrderAbove" formControlName="isFreeForOrderAbove"
+                         onLabel="Ano" onIcon="pi pi-check"
+                         offLabel="Ne" offIcon="pi pi-times"/>
+    </div>
+    <p-floatlabel variant="over" class="mt-8">
+        <label for="freeForOrderAbove">Hranice ceny objednávky pro uplatnění *</label>
+        <p-inputgroup id="freeForOrderAbove">
+            <p-input-number autocomplete="off" formControlName="freeForOrderAbove"></p-input-number>
+            <p-inputgroup-addon>Kč</p-inputgroup-addon>
+        </p-inputgroup>
+    </p-floatlabel>
+    @if (form.controls['freeForOrderAbove'].invalid && !form.controls['freeForOrderAbove'].untouched) {
+        <span class="text-red-500 text-xs mt-1">Hranice ceny objednávky pro uplatnění je povinná.</span>
+    }
+</form>

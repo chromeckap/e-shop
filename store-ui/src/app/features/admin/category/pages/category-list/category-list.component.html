@@ -1,0 +1,51 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="Nová kategorie" icon="pi pi-plus" severity="primary" class="mr-2"
+                  (onClick)="createCategory()"/>
+        <p-button severity="contrast" outlined
+                  [label]="isExpanded ? 'Sbalit' : 'Rozbalit'"
+                  [icon]="isExpanded ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+                  (onClick)="toggleExpand()"/>
+    </ng-template>
+</p-toolbar>
+<p-treetable
+    #treeTable
+    dataKey="key"
+    [value]="categories"
+    [scrollable]="true"
+    [tableStyle]="{ 'min-width': '100%', 'max-width': '100%' }"
+>
+    <ng-template #caption>
+        <h5 class="m-0">Seznam kategorií</h5>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 5%;"></th>
+            <th style="width: 10%;">ID</th>
+            <th style="width: 72%;">Název</th>
+            <th style="width: 13%;"></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-rowNode let-category="rowData">
+        <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+            <td style="width: 5%;"></td>
+            <td class="font-light" style="width: 10%;">{{category.id}}</td>
+            <td style="width: 72%;">
+                <p-treeTableToggler [rowNode]="rowNode"/>
+                <span [class]="category.parentId === null ? 'font-bold' : ''">
+                    <a class="hover:underline cursor-pointer" (click)="editCategory(category)">{{category.name}}</a>
+                </span>
+            </td>
+            <td style="width: 13%;">
+                <div class="flex gap-2">
+                    <p-button icon="pi pi-pencil" severity="info" [rounded]="false" [outlined]="true"
+                              (onClick)="editCategory(category)"/>
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="false" [outlined]="true"
+                              (onClick)="deleteCategory(category)"/>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-treetable>
+
+<p-confirmdialog [style]="{ width: '450px' }"></p-confirmdialog>

@@ -1,0 +1,36 @@
+<p-autoComplete
+    #autoComplete
+    [formControl]="searchControl"
+    [suggestions]="suggestions"
+    [optionLabel]="'name'"
+    placeholder="Jaký produkt hledáte?"
+    [delay]="200"
+    [forceSelection]="false"
+    [showClear]="true"
+    (completeMethod)="search($event)"
+    (onFocus)="onFocus()"
+    (onSelect)="onSelect($event)"
+    [inputStyle]="{'width': 'auto', 'min-width': '300px'}"
+>
+    <ng-template let-product pTemplate="item">
+        <div class="flex justify-content-between gap-2 p-2 w-full">
+            <div class="flex items-center gap-2">
+                <div class="w-12 h-12 overflow-hidden relative">
+                    <img [src]=getImage(product)
+                         [alt]="product.name"
+                         class="object-contain w-full h-full"/>
+                </div>
+                <div class="flex flex-col">
+                    <span>
+                        {{ product.name }}
+                    </span>
+                    <app-price-display
+                        [price]="product.price"
+                        [basePrice]="product.basePrice"
+                        [isPriceEqual]="product.isPriceEqual"
+                    />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-autoComplete>

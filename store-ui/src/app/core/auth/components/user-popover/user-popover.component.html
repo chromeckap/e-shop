@@ -1,0 +1,49 @@
+<a href="#" (click)="toggle($event, popover); $event.preventDefault()" class="flex items-center mt-1">
+    <span class="text-sm mr-1 font-bold">{{ authService.getUserEmail || 'Přihlásit se' }}</span>
+    <i class="pi" [ngClass]="isPopoverOpen ? 'pi-angle-up' : 'pi-angle-down'" style="font-size: 1.3rem"></i>
+</a>
+
+<p-popover #popover (onHide)="isPopoverOpen = false">
+    <div class="p-2">
+        @if (authService.isLoggedIn) {
+            @if (authService.isAdmin) {
+                <div class="mb-4">
+                    <a class="flex items-center justify-between font-bold hover:font-black"
+                       routerLink="/admin"
+                       (click)="popover.hide()">
+                        <i class="pi pi-cog"></i>
+                        <span class="ml-4">Administrace</span>
+                    </a>
+                    <p-divider></p-divider>
+                </div>
+            }
+            <a class="flex items-center justify-between font-bold hover:font-black"
+               routerLink="/moje-objednavky"
+               (click)="popover.hide()">
+                <i class="pi pi-receipt"></i>
+                <span class="ml-4">Moje objednávky</span>
+            </a>
+            <p-divider></p-divider>
+            <a class="flex items-center justify-between font-bold hover:font-black"
+               routerLink="/registrace"
+               (click)="logout(); popover.hide()">
+                <i class="pi pi-sign-out text-red-600"></i>
+                <span class="ml-4">Odhlásit se</span>
+            </a>
+        } @else {
+            <a class="flex items-center justify-between font-bold hover:font-black"
+               routerLink="/prihlaseni"
+               (click)="popover.hide()">
+                <i class="pi pi-sign-in"></i>
+                <span class="ml-2">Přihlášení</span>
+            </a>
+            <p-divider></p-divider>
+            <a class="flex items-center justify-between font-bold hover:font-black"
+               routerLink="/registrace"
+               (click)="popover.hide()">
+                <i class="pi pi-user-plus"></i>
+                <span class="ml-2">Registrace</span>
+            </a>
+        }
+    </div>
+</p-popover>

@@ -1,0 +1,23 @@
+<app-category-nav
+    [category]="category"
+    [childCategories]="childCategories">
+</app-category-nav>
+
+<div class="card">
+    <div class="mr-4 ml-4">
+        <app-product-filter
+            [filterRanges]="filterRanges"
+            (filterChanged)="onFilterChange($event)"
+            (sortChanged)="onSortChange($event)">
+        </app-product-filter>
+        <div class="mt-6">
+            <p-divider/>
+        </div>
+    </div>
+
+    <app-product-grid
+        [productPage]="productsPage"
+        [currentPage]="currentPage"
+        (pageChanged)="onPageChange($event)">
+    </app-product-grid>
+</div>

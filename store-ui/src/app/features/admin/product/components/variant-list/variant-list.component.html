@@ -1,0 +1,157 @@
+<h2 class="m-0.5">Varianty</h2>
+<p class="text-gray-500 text-sm m-0.5">Tabulka pro úpravy variant produktu a jejich vlastností.</p>
+<p-divider/>
+<p-table
+    #table
+    dataKey="id"
+    [value]="form.get('variants')?.value"
+    [lazy]="true"
+>
+    <ng-template #header>
+        <tr>
+            <th>ID</th>
+            <th>SKU</th>
+            <th>Skladem</th>
+            <th>Neomezené množství</th>
+            <th>Základní cena</th>
+            <th>Cena po slevě</th>
+            @for (attribute of form.get('attributes')?.value; track attribute.id) {
+                <th>{{attribute.name}}</th>
+            }
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-variant>
+        <tr>
+            <td class="font-light">{{variant.id}}</td>
+            <td>{{variant.sku}}</td>
+            <td>
+                <p-tag [value]="variant.quantity"
+                       [severity]="(variant.quantity > 15 || variant.quantityUnlimited)
+                   ? 'success'
+                   : ((variant.quantity === 0) ? 'danger' : 'warn')"/>
+            </td>
+            <td>
+                @if (variant.quantityUnlimited) {
+                    <p-iconfield class="pi pi-check text-green-500"/>
+
+                } @else {
+                    <p-iconfield class="pi pi-times text-red-500"/>
+
+                }
+            </td>
+            <td>{{variant.basePrice | customCurrency: 'CZK'}}</td>
+            <td>{{variant.discountedPrice | customCurrency: 'CZK'}}</td>
+            @for (attribute of form.get('attributes')?.value; track attribute.id) {
+                <td>
+                    <p-tag [icon]="getAttributeValue(variant, attribute) === 'Chybí' ? 'pi pi-exclamation-triangle' : ''"
+                           [severity]="getAttributeValue(variant, attribute) === 'Chybí' ? 'danger' : 'success'"
+                           [value]="getAttributeValue(variant, attribute)"/>
+                </td>
+            }
+            <td>
+                <div class="flex gap-2">
+                    <p-button icon="pi pi-pencil" severity="info" [rounded]="false" [outlined]="true"
+                              (onClick)="openDialog(variant)"/>
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="false" [outlined]="true"
+                              (onClick)="deleteVariant(variant)"/>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<div class="flex mt-3">
+    <p-button label="Přidat novou variantu" icon="pi pi-plus"
+              (onClick)="addVariant()"/>
+</div>
+
+<p-dialog [header]="editingVariant.id ? 'Upravit variantu' : 'Přidat novou variantu'"
+          [modal]="true"
+          [(visible)]="editDialogVisible"
+>
+    <div class="flex flex-col gap-4 mb-4">
+        <div class="flex items-center gap-2">
+            <label for="sku" class="font-semibold w-24">SKU *</label>
+            <input pInputText id="sku" type="text" autocomplete="off" class="flex-auto" required #sku="ngModel"
+                   [(ngModel)]="editingVariant.sku"
+                   (keyup.enter)="saveVariant()"/>
+        </div>
+        @if (sku.invalid && sku.touched) {
+            <span class="text-red-500 text-xs">SKU varianty je povinné.</span>
+        }
+        <div class="flex items-center gap-2">
+            <label for="quantity" class="font-semibold w-24">Skladem *</label>
+            <input pInputText id="quantity" type="number" autocomplete="off" class="flex-auto" required #quantity="ngModel"
+                   [(ngModel)]="editingVariant.quantity"
+                   (keyup.enter)="saveVariant()"/>
+        </div>
+        @if (quantity.invalid && quantity.touched) {
+            <span class="text-red-500 text-xs">Množství skladem je povinné.</span>
+        }
+        <div class="flex items-center gap-2">
+            <label for="quantity" class="font-semibold w-24">Neomezené množství *</label>
+            <p-toggle-button [(ngModel)]="editingVariant.quantityUnlimited"
+                             onLabel="Ano"
+                             onIcon="pi pi-check"
+                             offLabel="Ne"
+                             offIcon="pi pi-times"/>
+        </div>
+        <div class="flex items-center gap-2">
+            <label class="font-semibold w-24">Základní cena *</label>
+            <div>
+                <p-inputgroup>
+                    <p-inputnumber id="basePrice" autocomplete="off" class="w-full" required #basePrice="ngModel"
+                                   mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="2"
+                                   [(ngModel)]="editingVariant.basePrice"
+                                   (keyup.enter)="saveVariant()"
+                    ></p-inputnumber>
+                    <p-inputgroup-addon>Kč</p-inputgroup-addon>
+                </p-inputgroup>
+            </div>
+        </div>
+        @if (basePrice.invalid && basePrice.touched) {
+            <span class="text-red-500 text-xs">Základní cena je povinná.</span>
+        }
+        <div class="flex items-center gap-2">
+            <label class="font-semibold w-24">Cena po slevě *</label>
+            <div>
+                <p-inputgroup>
+                    <p-inputnumber id="discountedPrice" autocomplete="off" class="w-full" required #discountedPrice="ngModel"
+                                   mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="2"
+                                   [(ngModel)]="editingVariant.discountedPrice"
+                                   (keyup.enter)="saveVariant()"
+                    ></p-inputnumber>
+                    <p-inputgroup-addon>Kč</p-inputgroup-addon>
+                </p-inputgroup>
+            </div>
+        </div>
+        @if (discountedPrice.invalid && discountedPrice.touched) {
+            <span class="text-red-500 text-xs">Cena po slevě je povinná.</span>
+
+        }
+        @for (attribute of form.get('attributes')?.value; track attribute.id) {
+            <div class="flex items-center gap-2">
+                <label class="font-semibold w-24">{{attribute.name}}</label>
+                <p-select
+                    [options]="getAttributeValues(attribute.id)"
+                    [(ngModel)]="editingVariant.attributeValues![attribute.id]"
+                    showClear="true"
+                    filter="true"
+                    optionLabel="value"
+                    placeholder="Vyberte hodnotu"
+                    class="flex-auto"
+                    [appendTo]="'body'">
+                </p-select>
+            </div>
+        }
+    </div>
+    <div class="flex justify-end gap-2">
+        <p-button label="Zrušit" icon="pi pi-times" outlined severity="secondary"
+                  (onClick)="editDialogVisible = false"/>
+        <p-button label="Uložit" icon="pi pi-save" outlined
+                  [disabled]="sku.invalid || quantity.invalid || basePrice.invalid || discountedPrice.invalid"
+                  (onClick)="saveVariant()"/>
+    </div>
+</p-dialog>
+
+

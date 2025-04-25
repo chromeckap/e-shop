@@ -1,0 +1,23 @@
+<h2 class="m-0.5">Platební brána</h2>
+<p class="text-gray-500 text-sm m-0.5">Typ platební brány pro zpracování logiky.</p>
+<p-divider/>
+<form [formGroup]="form">
+    <p-floatlabel variant="over" class="mt-8">
+        <label>Typ platební brány *</label>
+        <p-select
+            formControlName="gatewayType"
+            placeholder="Vyberte typ platební brány *"
+            emptyMessage="Nejsou dostupné žádné platební brány."
+            fluid="true"
+            filter="true"
+            showClear="true"
+            [options]="gatewayTypes"
+            optionLabel="name"
+        >
+        </p-select>
+    </p-floatlabel>
+    @if (form.controls['gatewayType'].invalid && !form.controls['gatewayType'].untouched) {
+        <span class="text-red-500 text-xs mt-1">Typ platební metody je povinný.</span>
+    }
+</form>
+

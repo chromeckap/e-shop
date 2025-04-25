@@ -1,0 +1,22 @@
+<div class="grid gap-4 items-stretch
+            grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]
+            max-w-full w-full mx-auto
+            2xl:grid-cols-4">
+    @for (product of productPage.content; track product.id) {
+        <app-product-card
+            class="p-4 h-full"
+            [product]="product"/>
+    }
+</div>
+
+
+<div class="mt-4">
+    <p-paginator
+        [rows]="productPage.size"
+        [totalRecords]="productPage.totalElements"
+        [showCurrentPageReport]="true"
+        [first]="currentPage * (productPage.size || 0)"
+        currentPageReportTemplate="Aktuálně zobrazeno {first} - {last} z celkového z počtu {totalRecords} produktů"
+        (onPageChange)="onPageChange($event)"
+    />
+</div>

@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: replace-with-database-url # For example: jdbc:postgresql://localhost:5432/product
+    username: replace-with-username
+    password: replace-with-password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    baseline-description: "init"
+    baseline-version: 0
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+upload:
+  directory: ./uploads
+
+application:
+  config:
+    category-url: http://localhost:8020/api/v1/categories
+
+server:
+  port: 8030

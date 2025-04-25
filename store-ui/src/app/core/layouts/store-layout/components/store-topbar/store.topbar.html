@@ -1,0 +1,31 @@
+<div class="bg-white border-b border-gray-300 w-full">
+    <div class="w-full md:w-3/4 md:mx-auto md:pr-8 md:pl-8">
+        <div class="flex justify-between items-center pt-4 pb-4 border-b border-gray-300">
+            <a routerLink="/" class="text-3xl font-bold lg:hidden ml-2">
+                <span>Název webu</span>
+            </a>
+            <a routerLink="/" class="text-3xl font-bold hidden lg:block absolute left-1/2 transform -translate-x-1/2">
+                <span>Název webu</span>
+            </a>
+            <div class="flex items-center gap-6 pr-2 ml-auto">
+                <a (click)="goToCart()" class="cursor-pointer">
+                    <p-overlaybadge severity="danger"
+                                    [value]="shoppingCartItemsCount > 99 ? '99+' :  shoppingCartItemsCount">
+                        <i class="pi pi-shopping-cart" style="font-size: 1.6rem"></i>
+                    </p-overlaybadge>
+                </a>
+                <app-user-popover/>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full md:w-3/4 md:mx-auto md:pr-4 md:pl-4">
+        <p-menubar [model]="categories" class="white-menubar">
+            <ng-template #end>
+                <div class="ml-auto">
+                    <search-product-topbar/>
+                </div>
+            </ng-template>
+        </p-menubar>
+    </div>
+</div>

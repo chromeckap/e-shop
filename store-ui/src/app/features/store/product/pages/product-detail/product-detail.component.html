@@ -1,0 +1,15 @@
+<div class="card">
+    <app-product-info/>
+</div>
+
+<div class="card">
+    <app-review-container/>
+</div>
+
+@if (recommendedProducts.length) {
+    <div class="card">
+        <h3 class="ml-8">Doporučené produkty</h3>
+        <app-recommender-carousel
+            [products]="recommendedProducts"/>
+    </div>
+}

@@ -1,0 +1,26 @@
+<div class="grid grid-cols-12 gap-8">
+    <app-stats-card
+        title="Objednávky"
+        value="{{ordersPage.totalElements}}"
+        icon="pi-shopping-cart"
+        iconColor="blue"
+        highlightText="+{{newOrdersLastWeek}}"
+        class="contents">
+    </app-stats-card>
+    <app-stats-card
+        title="Příjem"
+        value="{{totalRevenue | customCurrency: 'CZK'}}"
+        icon="pi-dollar"
+        iconColor="orange"
+        highlightText="+{{weeklyRevenue | customCurrency: 'CZK'}}"
+        class="contents">
+    </app-stats-card>
+    <app-stats-card
+        title="Uživatelé"
+        value="{{usersPage.totalElements}}"
+        icon="pi-users"
+        iconColor="cyan"
+        highlightText="+{{newUsersLastWeek}}"
+        class="contents">
+    </app-stats-card>
+</div>

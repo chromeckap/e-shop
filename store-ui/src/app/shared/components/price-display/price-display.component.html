@@ -1,0 +1,15 @@
+@if (basePrice !== null) {
+    <span [class.text-red-600]="basePrice !== price && basePrice" class="font-bold">
+                    {{isPriceEqual ? "" : "Od "}}{{price | customCurrency:'CZK'}}
+                </span>
+    @if (basePrice !== price && basePrice) {
+        <div>
+            <span class="line-through text-gray-500 mr-1">{{basePrice | customCurrency:'CZK'}}</span>
+            <span class="text-red-600">-{{calculateDiscount(basePrice, price!)}}%</span>
+        </div>
+    }
+} @else {
+    <p-tag value="Chybí varianta"
+           icon="pi pi-exclamation-triangle"
+           severity="danger"/>
+}

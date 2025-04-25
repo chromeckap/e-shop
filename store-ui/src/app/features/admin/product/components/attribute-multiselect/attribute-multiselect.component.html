@@ -1,0 +1,12 @@
+<h2 class="m-0.5">Atributy variant</h2>
+<p class="text-gray-500 text-sm m-0.5">Vyberte atributy, které bude možné použít pro varianty.</p>
+<p-divider/>
+<form [formGroup]="form">
+    <p-multi-select
+        [options]="attributes"
+        formControlName="attributes"
+        optionLabel="name"
+        fluid="true"
+        placeholder="Vyberte atributy"
+        (onChange)="updateVariantValues()"/>
+</form>

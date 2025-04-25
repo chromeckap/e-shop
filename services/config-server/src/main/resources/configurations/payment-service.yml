@@ -1,0 +1,40 @@
+stripe:
+  publishable-key: replace-with-publishable-key # replace
+  secret-key: replace-with-secret-key # replace
+  webhook:
+    secret: replace-with-webhook-secret # replace
+
+spring:
+  datasource:
+    url: replace-with-database-url # For example: jdbc:postgresql://localhost:5432/payment
+    username: replace-with-username
+    password: replace-with-password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    baseline-description: "init"
+    baseline-version: 0
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: paymentConfirmation:com.ecommerce.kafka.PaymentConfirmation
+
+application:
+  config:
+    order-url: http://localhost:8050/api/v1/orders
+
+server:
+  port: 8060
+

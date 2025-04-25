@@ -1,0 +1,28 @@
+<h4 class="mb-0.5">Vyberte platební metodu</h4>
+<form [formGroup]="form">
+    <div class="flex flex-col gap-2">
+        @for (paymentMethod of availablePaymentMethods; track paymentMethod.id) {
+            <div class="bg-white p-4 rounded-lg flex justify-between text-lg">
+                <div class="field-checkbox">
+                    <p-radiobutton [inputId]=paymentMethod.id?.toString()
+                                   [value]="paymentMethod"
+                                   formControlName="paymentMethod" size="large">
+                    </p-radiobutton>
+                    <label [for]="paymentMethod.id" class="ml-2"
+                           [ngClass]="{'font-bold': form.get('paymentMethod')?.value === paymentMethod}">
+                        {{ paymentMethod.name }}
+                    </label>
+                </div>
+                <div>
+                    @if (getPaymentPrice(paymentMethod)) {
+                        <span [ngClass]="{'font-bold': form.get('paymentMethod')?.value === paymentMethod}">
+                            {{paymentMethod.price | customCurrency:'CZK'}}
+                        </span>
+                    } @else {
+                        <p-tag value="Zdarma" severity="success"/>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</form>

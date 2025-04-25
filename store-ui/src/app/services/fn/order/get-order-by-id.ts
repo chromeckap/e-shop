@@ -1,0 +1,21 @@
+import {HttpClient, HttpContext, HttpResponse} from '@angular/common/http';
+import { Observable } from 'rxjs';
+import {filter, map} from 'rxjs/operators';
+import { StrictHttpResponse } from '../../strict-http-response';
+import { RequestBuilder } from '../../request-builder';
+import {OrderResponse} from "../../models/order/order-response";
+
+export function getOrderById(http: HttpClient, rootUrl: string, id: number, context?: HttpContext): Observable<StrictHttpResponse<OrderResponse>> {
+    const rb = new RequestBuilder(rootUrl, getOrderById.PATH.replace('{id}', id.toString()), 'get');
+
+    return http.request(
+        rb.build({ responseType: 'json', accept: 'application/json', context })
+    ).pipe(
+        filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+        map((r: HttpResponse<any>) => {
+            return r as StrictHttpResponse<OrderResponse>;
+        })
+    );
+}
+
+getOrderById.PATH = '/api/v1/orders/{id}';

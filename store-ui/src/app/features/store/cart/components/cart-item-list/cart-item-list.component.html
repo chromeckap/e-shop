@@ -1,0 +1,82 @@
+<p-table #table
+         dataKey="id"
+         [value]="cart.items!"
+>
+    <ng-template #caption>
+        <h5 class="m-0">Seznam produktů</h5>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th>ID</th>
+            <th>Obrázek</th>
+            <th>Název</th>
+            <th>Vlastnosti</th>
+            <th>Cena za kus</th>
+            <th>Množství</th>
+            <th>Celková cena</th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-item>
+        <tr>
+            <td class="font-light">{{item.productId}}</td>
+            <td>
+                <div class="w-20 h-20 flex justify-center items-center overflow-hidden relative">
+                    <img [src]=getImage(item)
+                         [alt]="item.name"
+                         class="object-contain w-full h-full"/>
+                </div>
+            <td>
+                <a class="hover:underline cursor-pointer" (click)="navigateToProduct(item)">{{item.name}}</a>
+            </td>
+            <td>
+                <ul>
+                    @for (key of objectKeys(item.values); track key) {
+                        <li class="my-2">
+                            <span class="font-bold">{{key}}</span>: {{item.values[key]}}
+                        </li>
+                    }
+                </ul>
+            </td>
+            <td>{{item.price | customCurrency:'CZK'}}</td>
+            <td>
+                <p-inputnumber [(ngModel)]="item.quantity"
+                               [showButtons]="true"
+                               [min]="minQuantity"
+                               [max]="maxQuantity"
+                               [inputStyle]="{width: '3rem'}"
+                               class="mr-2"
+                               buttonLayout="horizontal"
+                               inputId="horizontal"
+                               [step]="1"
+                               mode="decimal"
+                               (onInput)="onInputNumberChange($event, item)">
+                    <ng-template #incrementbuttonicon>
+                        <span class="pi pi-plus"></span>
+                    </ng-template>
+                    <ng-template #decrementbuttonicon>
+                        <span class="pi pi-minus"></span>
+                    </ng-template>
+                </p-inputnumber>
+                @if (!item.isAvailable) {
+                    <p-tag value="Dostupných {{item.availableQuantity}} ks"
+                           severity="danger"
+                           icon="pi pi-exclamation-triangle"
+                           class="ml-2"/>
+                }
+            </td>
+            <td>{{item.totalPrice | customCurrency:'CZK'}}</td>
+            <td>
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="false" [outlined]="true"
+                          (onClick)="removeCartItem(item)"/>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template #footer>
+        <tr class="font-bold text-xl">
+            <td></td>
+            <td colspan="5">Celková cena produktů</td>
+            <td colspan="2">{{cart.totalPrice | customCurrency:'CZK'}}</td>
+        </tr>
+    </ng-template>
+</p-table>

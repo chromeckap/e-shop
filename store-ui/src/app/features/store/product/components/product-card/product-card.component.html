@@ -1,0 +1,29 @@
+<div class="w-full max-w-full overflow-hidden flex flex-col h-full rounded">
+    <a [routerLink]="productUrl" class="flex flex-col h-full">
+        <div class="relative w-full aspect-square flex items-center justify-center overflow-hidden">
+            @if (isLoading) {
+                <div class="absolute inset-0 bg-gray-200 rounded"></div>
+            }
+            <img
+                class="object-contain w-full h-full rounded transition-opacity duration-300"
+                [ngClass]="{'opacity-0': isLoading, 'opacity-100': !isLoading}"
+                [src]="getImage(product)"
+                [alt]="product.name"
+                (load)="onImageLoaded()"
+                (error)="onImageError()"
+            />
+        </div>
+        <div class="text-center flex flex-col mt-4 flex-grow">
+            <h2 class="text-lg font-medium mb-2 flex justify-center min-h-[4rem] line-clamp-2">
+                {{ product.name }}
+            </h2>
+            <div class="flex items-end justify-center min-h-[3rem]">
+                <app-price-display
+                    [price]="product.price!"
+                    [basePrice]="product.basePrice!"
+                    [isPriceEqual]="product.isPriceEqual!">
+                </app-price-display>
+            </div>
+        </div>
+    </a>
+</div>

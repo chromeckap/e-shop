@@ -1,0 +1,45 @@
+<div class="flex flex-col items-center justify-center">
+    @if (isLoggedIn) {
+        <span class="text-sm mb-2">
+            Chcete sdílet svou zkušenost?
+        </span>
+        <p-button label="Přidat vlastní recenzi" icon="pi pi-pencil" severity="info"
+                  (onClick)="showDialog()"/>
+    } @else {
+            <span class="text-sm mb-2">
+                Podělte se o vlastní zkušenost!
+            </span>
+                <p-button label="Přihlásit se" icon="pi pi-sign-in" severity="primary"
+                          routerLink="/prihlaseni"/>
+    }
+</div>
+
+
+<p-dialog header="Správa recenze"
+          [style]="{ width: '32rem' }"
+          [modal]="true"
+          [(visible)]="dialogVisible">
+    <div class="flex flex-col mb-3">
+        <div class="field">
+            <label for="rating" class="text-xs text-gray-500 font-medium block mb-2 ml-3">Jak produkt hodnotíte? *</label>
+            <p-rating id="rating" [(ngModel)]="review.rating" required #rating="ngModel" class="ml-3"/>
+        </div>
+        @if (rating.invalid && rating.touched) {
+            <span class="text-red-500 text-xs">Hodnocení je povinné.</span>
+        }
+        <p-floatlabel variant="over" class="mt-8">
+            <label for="text">Slovní hodnocení *</label>
+            <textarea id="text" pTextarea rows="4" [(ngModel)]="review.text" required #text="ngModel" class="w-full"></textarea>
+        </p-floatlabel>
+        @if (text.invalid && text.touched) {
+            <span class="text-red-500 text-xs">Slovní hodnocení je povinné.</span>
+        }
+    </div>
+    <div class="flex justify-end gap-2">
+        <p-button label="Zrušit" icon="pi pi-times" outlined severity="secondary"
+                  (onClick)="dialogVisible = false"/>
+        <p-button label="Uložit" icon="pi pi-save" outlined
+                  [disabled]="rating.invalid || text.invalid"
+                  (onClick)="saveReview()"/>
+    </div>
+</p-dialog>

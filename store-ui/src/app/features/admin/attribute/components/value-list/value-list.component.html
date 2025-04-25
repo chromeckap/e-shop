@@ -1,0 +1,52 @@
+<h2 class="m-0.5">Seznam hodnot</h2>
+<p class="text-gray-500 text-sm m-0.5">Základní informace o atributu.</p>
+<p-divider/>
+<p-table [value]="attributeValues">
+    <ng-template #header>
+        <tr>
+            <th style="width: 20%;">ID</th>
+            <th style="width: 60%;">Hodnota</th>
+            <th style="width: 20%;"></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-value>
+        <tr>
+            <td class="font-light">{{value.id}}</td>
+            <td>{{value.value}}</td>
+            <td>
+                <div class="flex gap-2">
+                    <p-button icon="pi pi-pencil" severity="info" [rounded]="false" [outlined]="true"
+                              (onClick)="openDialog(value)"/>
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="false" [outlined]="true"
+                              (onClick)="deleteValue(value)"/>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<div class="flex mt-3">
+    <input placeholder="Nová hodnota" class="mr-2" pInputText type="text"
+           [(ngModel)]="newValue"
+           (keyup.enter)="createValue()"/>
+    <p-button label="Přidat" icon="pi pi-plus" (onClick)="createValue()"/>
+</div>
+
+<p-dialog header="Upravit hodnotu"
+          [modal]="true"
+          [(visible)]="editDialogVisible"
+>
+    <div class="flex items-center gap-4 mb-4">
+        <label for="editValue" class="font-semibold w-24">Hodnota</label>
+        <input pInputText id="editValue" class="flex-auto" autocomplete="off" autofocus
+               [(ngModel)]="editingValue"
+               (keyup.enter)="saveValue()"/>
+    </div>
+    <div class="flex justify-end gap-2">
+        <p-button label="Zrušit" icon="pi pi-times" outlined severity="secondary"
+                  (onClick)="editDialogVisible = false"/>
+        <p-button label="Uložit" icon="pi pi-save" outlined
+                  (onClick)="saveValue()"/>
+    </div>
+</p-dialog>
+
+

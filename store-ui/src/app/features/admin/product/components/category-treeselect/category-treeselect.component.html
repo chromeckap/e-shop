@@ -1,0 +1,28 @@
+<h2 class="m-0.5">Výběr kategorií</h2>
+<p class="text-gray-500 text-sm m-0.5">Vyberte kategorie, ve kterých bude produkt zobrazen.</p>
+<p-divider/>
+<p-treeTable
+    #treeTable
+    dataKey="key"
+    [value]="categoriesTree"
+    selectionMode="checkbox"
+    [(selectionKeys)]="selectionKeys"
+    scrollable="true"
+>
+    <ng-template #header>
+        <tr>
+            <th style="width: 10%">ID</th>
+            <th style="width: 90%;">Název</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-rowNode let-category="rowData">
+        <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+            <td class="font-light" style="width: 10%;">{{category.id}}</td>
+            <td style="width: 90%;">
+                <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                <p-treeTableCheckbox [value]="rowNode" class="mr-2"/>
+                <span [class]="category.parentId === null ? 'font-bold' : ''">{{ category.name }}</span>
+            </td>
+        </tr>
+    </ng-template>
+</p-treeTable>

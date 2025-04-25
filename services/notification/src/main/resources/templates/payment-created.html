@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail platby</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        .info-table th, .info-table td {
+            padding: 8px;
+        }
+        .info-table th {
+            font-weight: bold;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .button {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .pay-button {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .pay-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Objednávku je možné zaplatit!</h2>
+    </div>
+    <table class="info-table">
+        <tr>
+            <th>Objednáno dne</th>
+            <th>Číslo objednávky</th>
+            <th>Číslo zákazníka</th>
+        </tr>
+        <tr>
+            <td><span th:text="${OrderCreateTime}"></span></td>
+            <td><span th:text="${orderId}"></span></td>
+            <td><span th:text="${user.id}"></span></td>
+        </tr>
+    </table>
+
+    <p style="margin-top: 12px;">Dobrý den <span th:text="${user.firstName}"></span> <span th:text="${user.lastName}"></span>,</p>
+    <p>vybral jste jako platební metodu <strong><span th:text="${paymentMethod}"></span></strong>,
+        níže najdete odkaz k zaplacení. Celková cena objednávky činí
+        <strong><span th:text="${#numbers.formatInteger(totalPrice, 0, 'DEFAULT')} + ' Kč'"></span></strong>.</p>
+
+    <div class="button">
+        <a th:href="${sessionUri}" class="pay-button"><strong>Zaplatit objednávku</strong></a>
+    </div>
+</div>
+</body>
+</html>

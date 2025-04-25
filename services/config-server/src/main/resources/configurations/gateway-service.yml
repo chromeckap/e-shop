@@ -1,0 +1,86 @@
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: category-service
+          uri: lb:http://CATEGORY-SERVICE
+          predicates:
+            - Path=/api/v1/categories/**
+          filters:
+            - AuthenticationFilter
+
+        - id: user-service
+          uri: lb:http://USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**,/api/v1/auth/**,/api/v1/validate/**
+
+        - id: product-service
+          uri: lb:http://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/v1/products/**,/api/v1/variants/**,/api/v1/attributes/**
+          filters:
+            - AuthenticationFilter
+
+        - id: cart-service
+          uri: lb:http://CART-SERVICE
+          predicates:
+            - Path=/api/v1/carts/**
+          filters:
+            - AuthenticationFilter
+
+        - id: order-service
+          uri: lb:http://ORDER-SERVICE
+          predicates:
+            - Path=/api/v1/orders/**
+          filters:
+            - AuthenticationFilter
+
+        - id: delivery-service
+          uri: lb:http://DELIVERY-SERVICE
+          predicates:
+            - Path=/api/v1/deliveries/**,/api/v1/delivery-methods/**
+          filters:
+            - AuthenticationFilter
+
+        - id: payment-service
+          uri: lb:http://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/v1/payments/**,/api/v1/payment-methods/**,/api/v1/stripe-webhook/**
+          filters:
+            - AuthenticationFilter
+
+        - id: review-service
+          uri: lb:http://REVIEW-SERVICE
+          predicates:
+            - Path=/api/v1/reviews/**
+          filters:
+            - AuthenticationFilter
+
+        - id: recommender-service
+          uri: lb:http://RECOMMENDER-SERVICE
+          predicates:
+            - Path=/api/v1/recommendations/**
+          filters:
+            - AuthenticationFilter
+  main:
+    allow-bean-definition-overriding: true
+
+server:
+  port: 8080
+
+application:
+  config:
+    auth-url: http://localhost:8010/api/v1/auth

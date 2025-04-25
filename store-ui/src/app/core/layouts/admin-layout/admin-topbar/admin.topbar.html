@@ -1,0 +1,13 @@
+<div class="layout-topbar">
+    <div class="layout-topbar-logo-container">
+        <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
+            <i class="pi pi-bars"></i>
+        </button>
+        <a class="text-2xl font-bold" routerLink="/admin">
+            <span>Název webu</span>
+        </a>
+    </div>
+    <div class="layout-topbar-actions">
+        <app-user-popover/>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="flex flex-col items-center text-center">
+    <h3>Recenze produktu</h3>
+    <div class="flex items-center justify-center mb-4">
+        <span class="text-2xl font-semibold">
+            {{summary.averageRating == null ? '/' : Number(summary.averageRating).toFixed(2) }}
+        </span>
+        <span class="text-gray-500 ml-1">/ 5</span>
+    </div>
+
+    <div class="text-sm text-gray-600 mb-4">
+        {{ summary.totalRatingsCount }} celkových hodnocení
+    </div>
+
+    <p-divider/>
+    @for (entry of ratingCountsList; track entry[0]) {
+        <div class="flex items-center mb-2">
+            <span class="mr-4 text-gray-700">{{ entry[0] }}</span>
+            <p-rating class="mr-4"
+                [(ngModel)]="entry[0]"
+                [readonly]="true"
+                [style]="{ 'font-size': '1.2em' }"/>
+            <span class="font-semibold">{{entry[1]}}x</span>
+        </div>
+    }
+</div>

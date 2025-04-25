@@ -1,0 +1,92 @@
+<div class="flex flex-col lg:flex-row gap-12">
+    <div class="lg:w-1/2">
+        <p-galleria [value]="images()" [responsiveOptions]="responsiveOptions" [numVisible]="5" [circular]="true">
+            <ng-template pTemplate="item" let-item>
+                <img [src]="item.itemImageSrc" style="max-height: 705px;" [alt]="item.title"/>
+            </ng-template>
+            <ng-template pTemplate="thumbnail" let-item>
+                <div>
+                    <img [src]="item.itemImageSrc" style="max-height: 100px;" [alt]="item.title"/>
+                </div>
+            </ng-template>
+        </p-galleria>
+    </div>
+
+    <div class="lg:w-1/2">
+        <div class="flex flex-col xl:w-3/5">
+            <h1 class="font-extrabold">{{product.name}}</h1>
+
+            <app-price-display
+                class="text-3xl mb-10"
+                [price]="currentPrice()"
+                [basePrice]="currentBasePrice()"
+                [isPriceEqual]="selectedVariant ? true : product.isPriceEqual!"
+            />
+
+            @if (product.relatedProducts?.length) {
+                <h4 class="mt-0">Související produkty</h4>
+                <div class="flex flex-row flex-wrap gap-3 mb-10">
+                    @for (product of product.relatedProducts; track product.id) {
+                        <a [routerLink]="'/produkt/' + product.id" class="w-[75px] h-[75px]">
+                            <img
+                                class="max-w-full max-h-full object-contain rounded-lg transition-opacity duration-300 hover:opacity-70"
+                                [src]="getImage(product.id!, product.primaryImagePath!)"
+                                [alt]="product.name"
+                            />
+                        </a>
+                    }
+                </div>
+            }
+
+            @for (attribute of product.attributes; track attribute.id) {
+                <div class="my-2">
+                    <label class="block mb-1 font-semibold">{{attribute.name}}</label>
+                    <p-select
+                        [options]="attributeOptions[attribute.id]"
+                        [(ngModel)]="selectedAttributes[attribute.id]"
+                        [placeholder]="'Vyberte ' + attribute.name"
+                        (onChange)="onAttributeChange()"
+                        optionValue="id"
+                        optionLabel="value"
+                        class="w-full"
+                    >
+                    </p-select>
+                </div>
+            }
+            <div class="flex flex-col mt-4">
+                <div class="flex flex-row w-full">
+                    <p-inputnumber [(ngModel)]="quantity" [showButtons]="true" [min]="1"
+                                   [inputStyle]="{width: '4rem'}"
+                                   class="mr-2"
+                                   buttonLayout="horizontal" inputId="horizontal" [step]="1" mode="decimal">
+                        <ng-template #incrementbuttonicon>
+                            <span class="pi pi-plus"></span>
+                        </ng-template>
+                        <ng-template #decrementbuttonicon>
+                            <span class="pi pi-minus"></span>
+                        </ng-template>
+                    </p-inputnumber>
+                    <div class="flex-1">
+                        <p-button label="Přidat do košíku" icon="pi pi-cart-plus" styleClass="w-full text-2xl"
+                                  [disabled]="!selectedVariant || !variantIsAvailable()" (onClick)="addItemToCart()"/>
+                    </div>
+                </div>
+                @if (!selectedVariant) {
+                    <span class="text-sm mt-1 italic">
+                        Vyberte variantu, kterou chcete zakoupit.
+                    </span>
+                } @else {
+                    <p-tag class="mt-2"
+                           [severity]="variantIsAvailable() ? 'success' : 'warn'"
+                           [value]="variantIsAvailable() ? 'Varianta je skladem' : 'Varianta není skladem'"
+                           [icon]="variantIsAvailable() ? 'pi pi-warehouse' : 'pi pi-exclamation-triangle'"/>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="mt-8 ql-snow">
+    <div class="ql-action whitespace-pre-wrap break-words text-xl"
+         [innerHTML]="sanitizedDescription"></div>
+</div>

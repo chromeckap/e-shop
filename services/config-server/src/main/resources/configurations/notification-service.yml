@@ -1,0 +1,44 @@
+mail:
+  sender:
+    host: replace-with-host # For example: smtp.seznam.cz
+    port: replace-with-port # For example: 587
+    username: replace-with-username # For example: user@seznam.cz
+    password: replace-with-password
+
+spring:
+  data:
+    mongodb:
+      host: replace-with-host # For example: localhost
+      port: replace-with-port # For example: 27017
+      database: replace-with-database-name
+      #username: username
+      #password: password
+      #authentication-database: admin
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: orderGroup,paymentGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: orderConfirmation:com.ecommerce.kafka.order.OrderConfirmation,paymentConfirmation:com.ecommerce.kafka.payment.PaymentConfirmation
+
+  mail:
+    host: localhost
+    port: 1025
+    username: user
+    password: user
+    properties:
+      smtp:
+        trust: "*"
+      auth: true
+      starttls:
+        enabled: true
+      connectiontimeout: 5000
+      timeout: 3000
+      writetimeout: 5000
+
+server:
+  port: 8090

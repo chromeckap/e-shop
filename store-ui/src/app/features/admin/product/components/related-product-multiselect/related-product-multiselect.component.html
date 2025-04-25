@@ -1,0 +1,38 @@
+<h2 class="m-0.5">Související produkty</h2>
+<p class="text-gray-500 text-sm m-0.5">Vyberte produkty, které budou relačně zobrazeny v informacích o produktu.</p>
+<p-divider/>
+<p-table
+    #table
+    dataKey="id"
+    [value]="productsPage.content!"
+    [(selection)]="selectedProducts"
+    selectionMode="multiple"
+    [rows]="size"
+    [rowHover]="true"
+    [paginator]="true"
+    [totalRecords]="productsPage.totalElements!"
+    [lazy]="true"
+    (onPage)="onPageChange($event)"
+    (selectionChange)="onSelectionChange($event)"
+>
+    <ng-template #header>
+        <tr>
+            <th style="width: 5%;">ID</th>
+            <th style="width: 35%;">Obrázek</th>
+            <th style="width: 60%;">Název</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-product>
+        <tr [pSelectableRow]="product">
+            <td class="font-light">{{product.id}}</td>
+            <td>
+                <div class="w-12 h-12 flex justify-center items-center overflow-hidden relative">
+                    <img [src]=getImage(product)
+                         [alt]="product.name"
+                         class="object-contain w-full h-full"/>
+                </div>
+            </td>
+            <td>{{product.name}}</td>
+        </tr>
+    </ng-template>
+</p-table>

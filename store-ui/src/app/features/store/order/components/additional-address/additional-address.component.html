@@ -1,0 +1,34 @@
+<form [formGroup]="form">
+    @if (this.form.get('isManualAddressRequired')?.value) {
+        <h4 class="mb-0.5">Adresa doručení</h4>
+        <div class="card flex flex-col">
+            <p-floatlabel variant="over">
+                <label for="street">Ulice *</label>
+                <input id="street" pInputText type="text" formControlName="street" class="w-full"/>
+            </p-floatlabel>
+            @if (form.controls['street'].invalid && !form.controls['street'].untouched) {
+                <span class="text-red-500 text-xs mt-1">Ulice je povinná.</span>
+            }
+            <div class="flex flex-row mt-8">
+                <div class="w-1/3">
+                    <p-floatlabel variant="over" class="mr-2">
+                        <label for="postalCode">Směrovací číslo *</label>
+                        <input id="postalCode" pInputText type="text" formControlName="postalCode" class="w-full"/>
+                    </p-floatlabel>
+                    @if (form.controls['postalCode'].invalid && !form.controls['postalCode'].untouched) {
+                        <span class="text-red-500 text-xs mt-1">Směrovací číslo je povinné.</span>
+                    }
+                </div>
+                <div class="w-2/3">
+                    <p-floatlabel variant="over">
+                        <label for="city">Město *</label>
+                        <input id="city" pInputText type="text" formControlName="city" class="w-full"/>
+                    </p-floatlabel>
+                    @if (form.controls['city'].invalid && !form.controls['city'].untouched) {
+                        <span class="text-red-500 text-xs mt-1">Město je povinné.</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</form>

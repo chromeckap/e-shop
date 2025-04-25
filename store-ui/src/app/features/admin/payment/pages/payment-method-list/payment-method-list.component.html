@@ -1,0 +1,82 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="Nová platební metoda" icon="pi pi-plus" severity="primary" class="mr-2"
+                  (onClick)="createPaymentMethod()"/>
+        <p-button label="Smazat vybrané" icon="pi pi-trash" severity="secondary"
+                  [disabled]="!selectedPaymentMethods || !selectedPaymentMethods.length"
+                  (onClick)="deleteSelectedPaymentMethods()"/>
+    </ng-template>
+</p-toolbar>
+<p-table
+    #table
+    dataKey="id"
+    [globalFilterFields]="['name']"
+    [value]="paymentMethods"
+    [(selection)]="selectedPaymentMethods"
+    [rows]="10"
+    [rowHover]="true"
+    [paginator]="true"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Aktuálně zobrazeno {first} - {last} z celkového z počtu {totalRecords} platebních metod"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Seznam platebních metod</h5>
+            <p-iconfield>
+                <input
+                    pInputText
+                    type="text"
+                    placeholder="Hledat název metody..."
+                    (input)="onGlobalFilter(table, $event)"
+                >
+            </p-iconfield>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 5%;">
+                <p-tableHeaderCheckbox/>
+            </th>
+            <th style="width: 10%;">ID</th>
+            <th pSortableColumn="name" style="width: 16%;">
+                Název <p-sortIcon field="name"/>
+            </th>
+            <th style="width: 10%;">Cena</th>
+            <th style="width: 13%;">Status</th>
+            <th style="width: 17%;">Hranice ceny objednávky</th>
+            <th style="width: 16%;">Zdarma při hranici ceny</th>
+            <th style="width: 13%;"></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-paymentMethod>
+        <tr>
+            <td>
+                <p-tableCheckbox [value]="paymentMethod"/>
+            </td>
+            <td class="font-light">{{paymentMethod.id}}</td>
+            <td>
+                <a class="hover:underline cursor-pointer" (click)="editPaymentMethod(paymentMethod)">{{paymentMethod.name}}</a>
+            </td>
+            <td>{{paymentMethod.price | customCurrency: 'CZK'}}</td>
+            <td>
+                <p-tag [icon]="paymentMethod.isActive ? 'pi pi-eye' : 'pi pi-eye-slash'"
+                       [severity]="paymentMethod.isActive ? 'success' : 'danger'"
+                       [value]="paymentMethod.isActive ? 'Viditelná' : 'Schovaná'"/>
+            </td>
+            <td>{{paymentMethod.freeForOrderAbove | customCurrency: 'CZK'}}</td>
+            <td>
+                <i [class]="paymentMethod.isFreeForOrderAbove ? 'pi pi-check text-green-500' : 'pi pi-times text-red-500'"></i>
+            </td>
+            <td>
+                <div class="flex gap-2">
+                    <p-button icon="pi pi-pencil" severity="info" [rounded]="false" [outlined]="true"
+                              (onClick)="editPaymentMethod(paymentMethod)"/>
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="false" [outlined]="true"
+                              (onClick)="deletePaymentMethod(paymentMethod)"/>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-confirmdialog [style]="{ width: '450px' }"></p-confirmdialog>

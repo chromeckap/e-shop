@@ -1,0 +1,29 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: replace-with-database-url # For example: jdbc:postgresql://localhost:5432/cart
+    username: replace-with-username
+    password: replace-with-password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    baseline-description: "init"
+    baseline-version: 0
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+application:
+  config:
+    user-url: http://localhost:8010/api/v1/users
+    product-url: http://localhost:8030/api/v1/variants
+
+server:
+  port: 8040
