@@ -23,7 +23,7 @@ upload:
 
 application:
   config:
-    category-url: http://localhost:8020/api/v1/categories
+    category-url: http://category-service:8020/api/v1/categories
 
 server:
   port: 8030

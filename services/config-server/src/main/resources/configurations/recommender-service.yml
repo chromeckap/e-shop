@@ -20,7 +20,7 @@ spring:
 
 application:
   config:
-    product-url: http://localhost:8030/api/v1/products
+    product-url: http://product-service:8030/api/v1/products
 
 server:
   port: 8120

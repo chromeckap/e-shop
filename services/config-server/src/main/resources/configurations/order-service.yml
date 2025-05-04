@@ -28,11 +28,11 @@ spring:
 
 application:
   config:
-    product-url: http://localhost:8030/api/v1/variants
-    payment-url: http://localhost:8060/api/v1/payments
-    payment-method-url: http://localhost:8060/api/v1/payment-methods
-    delivery-method-url: http://localhost:8070/api/v1/delivery-methods
-    cart-url: http://localhost:8040/api/v1/carts
+    product-url: http://product-service:8030/api/v1/variants
+    payment-url: http://payment-service:8060/api/v1/payments
+    payment-method-url: http://payment-service:8060/api/v1/payment-methods
+    delivery-method-url: http://delivery-service:8070/api/v1/delivery-methods
+    cart-url: http://shopping-cart-service:8040/api/v1/carts
 
 server:
   port: 8050

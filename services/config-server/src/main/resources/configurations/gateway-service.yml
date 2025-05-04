@@ -83,4 +83,4 @@ server:
 
 application:
   config:
-    auth-url: http://localhost:8010/api/v1/auth
+    auth-url: http://user-service:8010/api/v1/auth

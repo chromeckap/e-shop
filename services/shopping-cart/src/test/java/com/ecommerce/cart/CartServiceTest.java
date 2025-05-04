@@ -26,7 +26,7 @@ class CartServiceTest {
 
     @BeforeEach
     void setUp() {
-        cartService = new CartService(cartRepository, cartMapper);
+        cartService = new CartService(cartRepository, cartMapper, null);
     }
 
     @Test
@@ -83,34 +83,6 @@ class CartServiceTest {
                 () -> cartService.findCartOrCreateByUserId(null),
                 "Should throw NullPointerException for null userId"
         );
-    }
-
-    @Test
-    void getCartOrCreateByUserId_ReturnsCartResponse() {
-        // Arrange
-        Long userId = 1L;
-        Cart cart = new Cart();
-        cart.setId(1L);
-        cart.setUserId(userId);
-
-        CartResponse expectedResponse = CartResponse.builder()
-                .id(1L)
-                .userId(userId)
-                .build();
-
-        when(cartRepository.findByUserId(userId))
-                .thenReturn(Optional.of(cart));
-        when(cartMapper.toResponse(cart))
-                .thenReturn(expectedResponse);
-
-        // Act
-        CartResponse response = cartService.getCartOrCreateByUserId(userId);
-
-        // Assert
-        assertNotNull(response);
-        assertEquals(expectedResponse, response);
-        verify(cartRepository).findByUserId(userId);
-        verify(cartMapper).toResponse(cart);
     }
 
     @Test

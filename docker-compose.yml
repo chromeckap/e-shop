@@ -1,31 +1,51 @@
 services:
   postgres:
-    container_name: ms_pg_sql
-    image: postgres
+    image: postgres:16
+    restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345
-      PGDATA: /var/lib/postgresql/data
-    volumes:
-      - postgres:/var/lib/postgresql/data
+      POSTGRES_PASSWORD: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
     networks:
       - microservices-net
-    restart: unless-stopped
 
-# per admin, the other one above is only for intellij IDEA?
+  mongodb:
+    image: mongo
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=username
+      - MONGO_INITDB_ROOT_PASSWORD=password
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=username
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+
   pgadmin:
     container_name: ms_pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False' # needs to be in 'text'?
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
       - pgadmin:/var/lib/pgadmin
     ports:
-      - 5050:80
+      - "5050:80"
     networks:
       - microservices-net
     restart: unless-stopped
@@ -38,7 +58,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - 22181:2181
+      - "22181:2181"
     networks:
       - microservices-net
 
@@ -46,7 +66,7 @@ services:
     image: confluentinc/cp-kafka:latest
     container_name: ms_kafka
     ports:
-      - 9092:9092
+      - "9092:9092"
     depends_on:
       - zookeeper
     environment:
@@ -59,10 +79,359 @@ services:
     networks:
       - microservices-net
 
+
+
+  config-server:
+    build:
+      context: ./services/config-server
+    ports:
+      - "8888:8888"
+    expose:
+      - "8888"
+    networks:
+      - microservices-net
+
+  discovery-service:
+    build:
+      context: ./services/discovery
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-server
+    networks:
+      - microservices-net
+    links:
+      - config-server
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 10 &&
+        java -jar /app/app.jar
+      "
+
+  gateway:
+    build:
+      context: ./services/gateway
+    ports:
+      - "8080:8080"
+    networks:
+      - microservices-net
+    depends_on:
+      - config-server
+      - discovery-service
+    links:
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 30 &&
+        java -jar /app/app.jar
+      "
+
+  user-service:
+    build:
+      context: ./services/user
+    ports:
+      - "8010:8010"
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+      - config-server
+      - discovery-service
+    links:
+      - postgres
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=user-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/user
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_FLYWAY_USER=postgres
+      - SPRING_FLYWAY_PASSWORD=postgres
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 60 &&
+        java -jar /app/app.jar
+      "
+
+  category-service:
+    build:
+      context: ./services/category
+    ports:
+      - "8020:8020"
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+      - config-server
+      - discovery-service
+    links:
+      - postgres
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=category-service
+      - eureka.instance.prefer-ip-address=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/category
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_FLYWAY_USER=postgres
+      - SPRING_FLYWAY_PASSWORD=postgres
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 60 &&
+        java -jar /app/app.jar
+      "
+
+  product-service:
+    build:
+      context: ./services/product
+    ports:
+      - "8030:8030"
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+      - config-server
+      - discovery-service
+    links:
+      - postgres
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=product-service
+      - eureka.instance.prefer-ip-address=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/product
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_FLYWAY_USER=postgres
+      - SPRING_FLYWAY_PASSWORD=postgres
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 60 &&
+        java -jar /app/app.jar
+      "
+
+  shopping-cart-service:
+    build:
+      context: ./services/shopping-cart
+    ports:
+      - "8040:8040"
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+      - config-server
+      - discovery-service
+    links:
+      - postgres
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=shopping-cart-service
+      - eureka.instance.prefer-ip-address=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/cart
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_FLYWAY_USER=postgres
+      - SPRING_FLYWAY_PASSWORD=postgres
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 60 &&
+        java -jar /app/app.jar
+      "
+
+  order-service:
+    build:
+      context: ./services/order
+    ports:
+      - "8050:8050"
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+      - kafka
+      - config-server
+      - discovery-service
+    links:
+      - postgres
+      - kafka
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=order-service
+      - eureka.instance.prefer-ip-address=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/order
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_FLYWAY_USER=postgres
+      - SPRING_FLYWAY_PASSWORD=postgres
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 60 &&
+        java -jar /app/app.jar
+      "
+
+  payment-service:
+    build:
+      context: ./services/payment
+    ports:
+      - "8060:8060"
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+      - kafka
+      - config-server
+      - discovery-service
+    links:
+      - postgres
+      - kafka
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=payment-service
+      - eureka.instance.prefer-ip-address=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/payment
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_FLYWAY_USER=postgres
+      - SPRING_FLYWAY_PASSWORD=postgres
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 60 &&
+        java -jar /app/app.jar
+      "
+
+  delivery-service:
+    build:
+      context: ./services/delivery
+    ports:
+      - "8070:8070"
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+      - config-server
+      - discovery-service
+    links:
+      - postgres
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=delivery-service
+      - eureka.instance.prefer-ip-address=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/delivery
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_FLYWAY_USER=postgres
+      - SPRING_FLYWAY_PASSWORD=postgres
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 60 &&
+        java -jar /app/app.jar
+      "
+
+  review-service:
+    build:
+      context: ./services/review
+    ports:
+      - "8100:8100"
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+      - config-server
+      - discovery-service
+    links:
+      - postgres
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=review-service
+      - eureka.instance.prefer-ip-address=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/review
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_FLYWAY_USER=postgres
+      - SPRING_FLYWAY_PASSWORD=postgres
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 60 &&
+        java -jar /app/app.jar
+      "
+
+  recommender-service:
+    build:
+      context: ./services/recommender
+    ports:
+      - "8120:8120"
+    networks:
+      - microservices-net
+    depends_on:
+      - config-server
+      - discovery-service
+    links:
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=recommender-service
+      - eureka.instance.prefer-ip-address=true
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 90 &&
+        java -jar /app/app.jar
+      "
+
 networks:
   microservices-net:
     driver: bridge
 
 volumes:
-  postgres:
+  postgres_data:
   pgadmin:
+  mongo:

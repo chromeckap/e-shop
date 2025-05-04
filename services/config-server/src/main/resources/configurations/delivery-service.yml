@@ -18,10 +18,5 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
-api:
-  token: b79b16c2-2f77-450f-91a5-868c3c698a82
-  secret:
-    key: dOJWwjp+BWqUcof3K+3OW6XGTnEpmWerx64TCNk0+0pZnonHdN99NFRIGaJSX0/HTtiu6AGYpKp0mjguzqp+wg==
-
 server:
   port: 8070

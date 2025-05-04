@@ -33,7 +33,7 @@ spring:
 
 application:
   config:
-    order-url: http://localhost:8050/api/v1/orders
+    order-url: http://order-service:8050/api/v1/orders
 
 server:
   port: 8060

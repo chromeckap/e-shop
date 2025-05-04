@@ -86,7 +86,7 @@ class OrderProducerTest {
                 .user(user)
                 .products(products)
                 .additionalCosts(additionalCosts)
-                .orderDate(currentDate)
+                .orderCreateTime(currentDate)
                 .build();
     }
 

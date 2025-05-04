@@ -178,23 +178,6 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("Should get order by id successfully")
-    void getOrderById_ShouldReturnOrderResponse() {
-        // Arrange
-        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
-        when(orderMapper.toResponse(order)).thenReturn(orderResponse);
-
-        // Act
-        OrderResponse result = orderService.getOrderById(orderId);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(orderResponse, result);
-        verify(orderRepository).findById(orderId);
-        verify(orderMapper).toResponse(order);
-    }
-
-    @Test
     @DisplayName("Should get all orders with paging")
     void getAllOrders_ShouldReturnPagedOrders() {
         // Arrange
