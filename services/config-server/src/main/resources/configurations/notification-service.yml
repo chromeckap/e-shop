@@ -1,8 +1,8 @@
 mail:
   sender:
-    host: smtp.seznam.cz # For example: smtp.seznam.cz
-    port: 587 # For example: 587
-    username: user@seznam.cz # For example: user@seznam.cz
+    host: replace-with-host # For example: smtp.seznam.cz
+    port: replace-with-port # For example: 587
+    username: replace-with-username # For example: user@seznam.cz
     password: replace-with-password
 
 spring:
