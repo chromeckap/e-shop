@@ -1,22 +1,22 @@
 mail:
   sender:
-    host: replace-with-host # For example: smtp.seznam.cz
-    port: replace-with-port # For example: 587
-    username: replace-with-username # For example: user@seznam.cz
+    host: smtp.seznam.cz # For example: smtp.seznam.cz
+    port: 587 # For example: 587
+    username: user@seznam.cz # For example: user@seznam.cz
     password: replace-with-password
 
 spring:
   data:
     mongodb:
-      host: replace-with-host # For example: localhost
-      port: replace-with-port # For example: 27017
-      database: replace-with-database-name
-      #username: username
-      #password: password
+      host: mongodb
+      port: 27017
+      database: mongo
+      username: username
+      password: password
       #authentication-database: admin
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: kafka:9092
       group-id: orderGroup,paymentGroup
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

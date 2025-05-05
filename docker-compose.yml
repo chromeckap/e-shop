@@ -402,6 +402,33 @@ services:
         java -jar /app/app.jar
       "
 
+  notification-service:
+    build:
+      context: ./services/notification
+    ports:
+      - "8090:8090"
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+      - config-server
+      - discovery-service
+    links:
+      - postgres
+      - config-server
+      - discovery-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.instance.hostname=notification-service
+      - eureka.instance.prefer-ip-address=true
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for config server to start...' &&
+        sleep 60 &&
+        java -jar /app/app.jar
+      "
+
   recommender-service:
     build:
       context: ./services/recommender
@@ -426,6 +453,22 @@ services:
         sleep 90 &&
         java -jar /app/app.jar
       "
+
+  frontend:
+    build:
+      context: ./store-ui
+    ports:
+      - "4200:4200"
+    networks:
+      - microservices-net
+    volumes:
+      - .:/store-ui/app
+      - /store-ui/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    command: npm start -- --host 0.0.0.0 --poll
+
 
 networks:
   microservices-net:
