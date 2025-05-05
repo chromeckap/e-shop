@@ -1,13 +1,13 @@
 {
     "name": "store-ui",
-    "version": "19.0.0",
+    "version": "19.0.1",
     "scripts": {
-        "ng": "../../../Pictures/e-commerce/store-ui/node_modules/.bin/ng",
-        "start": "../../../Pictures/e-commerce/store-ui/node_modules/.bin/ng serve",
-        "build": "../../../Pictures/e-commerce/store-ui/node_modules/.bin/ng build",
-        "watch": "../../../Pictures/e-commerce/store-ui/node_modules/.bin/ng build --watch --configuration development",
-        "format": "../../../Pictures/e-commerce/store-ui/node_modules/.bin/prettier --write \"**/*.{js,mjs,ts,mts,d.ts,html}\" --cache",
-        "test": "../../../Pictures/e-commerce/store-ui/node_modules/.bin/ng test"
+        "ng": "ng",
+        "start": "ng serve",
+        "build": "ng build",
+        "watch": "ng build --watch --configuration development",
+        "format": "prettier --write \"**/*.{js,mjs,ts,mts,d.ts,html}\" --cache",
+        "test": "ng test"
     },
     "private": true,
     "dependencies": {
@@ -19,15 +19,14 @@
         "@angular/platform-browser": "^19.0.0",
         "@angular/platform-browser-dynamic": "^19.0.0",
         "@angular/router": "^19.0.0",
-        "@auth0/angular-jwt": "^5.2.0",
         "@primeng/themes": "^19.0.5",
         "chart.js": "4.4.2",
         "primeclt": "^0.1.5",
         "primeicons": "^7.0.0",
-        "primeng": "^19.0.6",
+        "primeng": "^19.0.8",
         "quill": "^2.0.3",
         "rxjs": "~7.8.0",
-        "tailwindcss-primeui": "^0.3.2",
+        "tailwindcss-primeui": "^0.5.1",
         "tslib": "^2.3.0",
         "zone.js": "~0.15.0"
     },
